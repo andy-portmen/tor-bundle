@@ -1,0 +1,74 @@
+body {
+  width: 500px;
+  height: 300px;
+}
+img {
+  cursor: pointer;
+}
+input[type=button] {
+  border:  solid 1px #eee;
+  background-color: #fff;
+  width: 120px;
+  margin: 2px 0;
+  outline: none;
+  cursor: pointer;
+}
+input {
+  outline: none;
+}
+input[type=button]:active {
+  border-color: #00a;
+}
+
+[hbox] {
+  display: flex;
+  flex-direction: row;
+}
+[vbox] {
+  display: flex;
+  flex-direction: column;
+}
+[flex="1"] {
+  flex: 1;
+}
+[flex="2"] {
+  flex: 2;
+}
+[pack=center] {
+  justify-content: center;
+}
+[align=center] {
+  align-items: center;
+}
+body[data-status=connecting] img[data-cmd=connection] {
+  opacity:  0.3;
+}
+
+#log {
+  padding: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: calc(47vw - 20px);
+  background-color: rgba(0, 0, 0, 0.01);
+  border: dashed 1px rgba(0, 0, 0, 0.05);
+}
+#log>* {
+  margin-bottom: 10px;
+}
+#toolbar {
+  margin-top: 8px;
+}
+
+.msg span:nth-child(1) {
+  font-size: 80%;
+}
+.msg span:nth-child(2) {
+  padding: 0 5px;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.log {
+  background-color: rgba(0, 0, 0, 0.05);
+  border:  dotted 1px rgba(0, 0, 0, 0.05);
+  padding: 0 5px;
+}

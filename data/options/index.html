@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Test Extension Options</title>
+  <style>
+    body {
+      padding: 10px;
+    }
+    input[type=text] {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <p>
+    Tor bundle path:
+    <input type="text" id="directory" placeholder="e.g.: C:\Users\username\Desktop\tor">
+    <div>First download the latest "Tor Bundle" pack from <a href="">github.com</a>, and extract it in a local directory. Then place the root's absolute path here.</div>
+  </p>
+
+  <div>
+    <button id="save">Save</button>
+    <span id="status"></span>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

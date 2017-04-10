@@ -1,0 +1,47 @@
+{
+  "name": "Tor Browser",
+  "short_name": "itbrowser",
+  "description": "Enables Tor network and modify few settings to protect user privacy",
+  "author": "Jeremy Schomery",
+  "version": "0.1.0",
+  "manifest_version": 2,
+  "permissions": [
+    "storage",
+    "tabs",
+    "proxy",
+    "privacy",
+    "webRequest",
+    "downloads",
+    "management",
+    "notifications",
+    "nativeMessaging",
+    "https://api.github.com/repos/andy-portmen/native-client/releases/latest"
+  ],
+  "background": {
+    "scripts": [
+      "EventEmitter.js",
+      "tor.js",
+      "proxy.js",
+      "privacy.js",
+      "ui.js",
+      "common.js"
+    ]
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "data/icons/16.png",
+      "32": "data/icons/32.png"
+    },
+    "default_popup": "data/popup/index.html"
+  },
+  "homepage_url": "http://add0n.com/media-tools.html",
+  "icons": {
+    "16": "data/icons/16.png",
+    "48": "data/icons/48.png",
+    "128": "data/icons/128.png"
+  },
+  "options_ui": {
+    "page": "data/options/index.html",
+    "chrome_style": true
+  }
+}
