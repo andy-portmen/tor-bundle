@@ -10,7 +10,7 @@ var privacy = {
   current: {
     value: 'default'
   },
-  set: (mode = 2, callback = function () {}) => {
+  set: (mode = 2, callback = function() {}) => {
     chrome.privacy.network.webRTCIPHandlingPolicy.get({}, o => {
       privacy.current = {
         value: o.value
@@ -24,7 +24,7 @@ var privacy = {
       });
     });
   },
-  reset: (callback = function () {}) => {
+  reset: (callback = function() {}) => {
     chrome.privacy.network.webRTCIPHandlingPolicy.set(privacy.current, () => {
       privacy.onchanges.forEach(c => c('webrtc', false));
       callback();

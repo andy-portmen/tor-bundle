@@ -22,7 +22,7 @@ Proxy: ${ui.cache.proxy}`
 });
 ui.on('title', obj => {
   if (obj.status) {
-    let active = obj.status === 'connected';
+    const active = obj.status === 'connected';
     chrome.browserAction.setIcon({
       path: {
         16: '/data/icons/' + (active ? 'enabled/' : '') + '16.png',
@@ -33,10 +33,10 @@ ui.on('title', obj => {
   }
 });
 
-ui.notification = function (message) {
+ui.notification = function(message) {
   chrome.notifications.create({
     type: 'basic',
-    title: 'Tor Protector',
+    title: 'Tor Control',
     message,
     iconUrl: '/data/icons/48.png'
   });

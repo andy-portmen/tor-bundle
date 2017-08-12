@@ -1,9 +1,9 @@
 {
-  "name": "Tor Browser",
+  "name": "Tor Control (anonymity layer)",
   "short_name": "itbrowser",
-  "description": "Enables Tor network and modify few settings to protect user privacy",
-  "author": "Jeremy Schomery",
-  "version": "0.1.0",
+  "description": "Brings the anonymity of the Tor network and modifies few settings to protect user privacy",
+  "author": "Jeremy Schomery, Andy Portmen",
+  "version": "0.1.1",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -34,7 +34,7 @@
     },
     "default_popup": "data/popup/index.html"
   },
-  "homepage_url": "http://add0n.com/media-tools.html",
+  "homepage_url": "http://add0n.com/tor-control.html",
   "icons": {
     "16": "data/icons/16.png",
     "48": "data/icons/48.png",

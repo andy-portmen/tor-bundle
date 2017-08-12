@@ -1,6 +1,9 @@
 body {
   width: 500px;
   height: 300px;
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  font-size: 13px;
+  background-color: #fff;
 }
 img {
   cursor: pointer;

@@ -1,20 +1,20 @@
 'use strict';
 
-function save () {
-  let directory = document.getElementById('directory').value;
+function save() {
+  const directory = document.getElementById('directory').value;
   chrome.storage.local.set({
     directory
   }, () => {
-    let status = document.getElementById('status');
+    const status = document.getElementById('status');
     status.textContent = 'Options saved.';
     setTimeout(() => status.textContent = '', 750);
   });
 }
 
-function restore () {
+function restore() {
   chrome.storage.local.get({
     directory: '',
-  }, (prefs) => {
+  }, prefs => {
     document.getElementById('directory').value = prefs.directory;
   });
 }

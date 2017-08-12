@@ -1,11 +1,11 @@
 /* globals EventEmitter */
 'use strict';
 
-var Native = function () {
+var Native = function() {
   this.callback = null;
   this.channel = chrome.runtime.connectNative('com.add0n.node');
 
-  function onDisconnect () {
+  function onDisconnect() {
     chrome.tabs.create({
       url: '/data/helper/index.html'
     });
@@ -30,8 +30,8 @@ var Native = function () {
     }
   });
 };
-Native.prototype.exec = function (command, args, callback = function () {}) {
-  this.callback = function (res) {
+Native.prototype.exec = function(command, args, callback = function() {}) {
+  this.callback = function(res) {
     callback(res);
   };
   this.channel.postMessage({
@@ -41,7 +41,7 @@ Native.prototype.exec = function (command, args, callback = function () {}) {
   });
 };
 
-var Tor = function (options) {
+var Tor = function(options) {
   this.callback = this.response;
   EventEmitter.call(this);
   this.directory = options.directory;
@@ -75,7 +75,7 @@ var Tor = function (options) {
 Tor.prototype = Object.create(Native.prototype);
 Tor.prototype = Object.create(EventEmitter.prototype);
 
-Tor.prototype.response = function (res) {
+Tor.prototype.response = function(res) {
   this.callbacks.forEach(c => c(res));
   if (res.code) {
     this.emit('status', 'disconnected');
@@ -100,7 +100,7 @@ Error: ${res.stderr}`
 
   if (res.stdout) {
     res.stdout.data.split('\n').forEach(data => {
-      let err = /\[(err|warn|notice)\] (.*)/.exec(data);
+      const err = /\[(err|warn|notice)\] (.*)/.exec(data);
       if (err) {
         this.emit('console', {
           type: err[1],
@@ -108,10 +108,10 @@ Error: ${res.stderr}`
         });
       }
 
-      let progress = /Bootstrapped (\d+)%\: (.*)/.exec(data);
+      const progress = /Bootstrapped (\d+)%: (.*)/.exec(data);
       if (progress) {
         this.emit('progress', {
-          value: +progress[1],
+          value: Number(progress[1]),
           msg: progress[2]
         });
       }
@@ -119,7 +119,7 @@ Error: ${res.stderr}`
   }
 };
 
-Tor.prototype.connect = function () {
+Tor.prototype.connect = function() {
   this.emit('status', 'connecting');
   this.channel.postMessage({
     cmd: 'spawn',
@@ -133,7 +133,7 @@ Tor.prototype.connect = function () {
   });
 };
 
-Tor.prototype.refresh = function () {
+Tor.prototype.refresh = function() {
   Native.call(this);
   this.callback = this.response;
   this.stdout = 'Press the switch button to get started';
@@ -141,8 +141,8 @@ Tor.prototype.refresh = function () {
   this.connect();
 };
 
-Tor.prototype.command = function (command, callback = function () {}) {
-  let commands = [
+Tor.prototype.command = function(command, callback = function() {}) {
+  const commands = [
     `AUTHENTICATE "${this.info.password}"\r\n`, // Chapter 3.5
     command + '\r\n',
     'QUIT\r\n'
@@ -157,27 +157,26 @@ Tor.prototype.command = function (command, callback = function () {}) {
     password: ''
   }, res => {
     callback(res);
-    this.emit('stdout', res.replace(/250[ \-\+]/g, '').replace(/\n\r?/g, '↵'));
+    this.emit('stdout', res.replace(/250[ \-+]/g, '').replace(/\n\r?/g, '↵'));
   });
 };
 
-Tor.prototype.disconnect = function () {
+Tor.prototype.disconnect = function() {
   this.channel.disconnect();
   this.emit('status', 'disconnected');
   this.emit('stdout', 'Kill Tor instance\n\r');
 };
-var aaa;
-Tor.prototype.getIP = function (callback = function () {}) {
+
+Tor.prototype.getIP = function(callback = function() {}) {
   this.command('GETINFO circuit-status', res => {
-    aaa = res;
-    let id = (res || '')
+    const id = (res || '')
       .split('\n')
-      .filter(s => /^\d+\sBUILT/.test(s)).map(s => /\$([^\s\$\~]+)[\s\~][^\$]*$/.exec(s))
+      .filter(s => /^\d+\sBUILT/.test(s)).map(s => /\$([^\s$~]+)[\s~][^$]*$/.exec(s))
       .filter(a => a)
       .map(a => a[1]).shift();
     if (id) {
       this.command('GETINFO ns/id/' + id, res => {
-        let ip = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.exec(res || '');
+        const ip = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.exec(res || '');
         if (ip) {
           callback(ip[0]);
           this.info.ip = ip[0];

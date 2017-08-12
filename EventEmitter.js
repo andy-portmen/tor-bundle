@@ -1,9 +1,9 @@
 'use strict';
 
-var EventEmitter = function () {
+var EventEmitter = function() {
   this.ecb = {};
 };
-EventEmitter.prototype.emit = function (id, data) {
+EventEmitter.prototype.emit = function(id, data) {
   (this.ecb[id] || []).forEach(c => c(data));
   chrome.runtime.sendMessage({
     cmd: 'event',
@@ -11,7 +11,7 @@ EventEmitter.prototype.emit = function (id, data) {
     data
   });
 };
-EventEmitter.prototype.on = function (id, callback) {
+EventEmitter.prototype.on = function(id, callback) {
   this.ecb[id] = this.ecb[id] || [];
   this.ecb[id].push(callback);
 };

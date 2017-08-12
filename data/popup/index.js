@@ -6,10 +6,10 @@ var elements = {
   webrtc: document.getElementById('prefs.webrtc')
 };
 
-function log (msg) {
-  function single (msg) {
+function log(msg) {
+  function single(msg) {
     let node = document.importNode(elements.template.content, true);
-    let parts = /(.*)\[(err|warn|notice)\] (.*)/.exec(msg);
+    const parts = /(.*)\[(err|warn|notice)\] (.*)/.exec(msg);
     if (parts) {
       node.querySelector('span:nth-child(1)').textContent = parts[1];
       node.querySelector('span:nth-child(2)').textContent = parts[2];
@@ -27,7 +27,7 @@ function log (msg) {
   msg.split('\n').filter(m => m.trim()).forEach(single);
 }
 
-function status (s) {
+function status(s) {
   document.body.dataset.status = s;
   document.querySelector('[data-cmd="connection"]').src =
     s === 'disconnected' ? 'off.png' : 'on.png';

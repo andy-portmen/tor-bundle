@@ -10,9 +10,6 @@ var prefs = {
   'auto-run': false,
   'directory': null
 };
-chrome.storage.onChanged.addListener(ps => {
-  Object.keys(ps).forEach(p => prefs[p] = ps[p].newValue);
-});
 
 var tor = new Tor({
   directory: ''
@@ -48,7 +45,7 @@ proxy.addListener('change', bol => ui.emit('title', {
   proxy: bol ? 'SOCKS' : 'default'
 }));
 chrome.storage.local.get(prefs, p => {
-  prefs = p;
+  prefs = Object.assign(prefs, p);
   // directory
   tor.directory = p.directory;
   // auto run?
@@ -93,3 +90,34 @@ chrome.runtime.onMessage.addListener(request => {
     }
   }
 });
+
+// pref updates
+chrome.storage.onChanged.addListener(ps => {
+  Object.keys(ps).forEach(p => {
+    prefs[p] = ps[p].newValue;
+    if (p === 'directory') {
+      tor.directory = ps.directory.newValue;
+    }
+  });
+});
+
+// FAQs & Feedback
+chrome.storage.local.get({
+  'version': null,
+  'faqs': navigator.userAgent.toLowerCase().indexOf('firefox') === -1
+}, prefs => {
+  const version = chrome.runtime.getManifest().version;
+
+  if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
+    chrome.storage.local.set({version}, () => {
+      chrome.tabs.create({
+        url: 'http://add0n.com/tor-control.html?version=' + version +
+          '&type=' + (prefs.version ? ('upgrade&p=' + prefs.version) : 'install')
+      });
+    });
+  }
+});
+(function() {
+  const {name, version} = chrome.runtime.getManifest();
+  chrome.runtime.setUninstallURL('http://add0n.com/feedback.html?name=' + name + '&version=' + version);
+})();

@@ -2,41 +2,25 @@
 
 var proxy = {
   onchanges: [],
-  current: {
-    value: {
-      mode: 'system'
-    }
-  },
-  set: (info, callback = function () {}) => {
-    let rule = {
-      host: info['socks-host'],
-      port: info['socks-port'],
-      scheme: 'socks5'
-    };
-    chrome.proxy.settings.get({}, o => {
-      proxy.current = {
-        value: o.value
-      };
-      console.log(proxy.current);
-
-      chrome.proxy.settings.set({
-        value: {
-          mode: 'fixed_servers',
-          rules: {
-            proxyForHttp: rule,
-            proxyForHttps: rule,
-            proxyForFtp: rule,
-            fallbackProxy: rule
-          }
+  set: (info, callback = function() {}) => {
+    chrome.proxy.settings.set({
+      value: {
+        mode: 'pac_script',
+        pacScript: {
+          url: chrome.runtime.getURL('data/pac/chrome.js')
         }
-      }, () => {
-        proxy.onchanges.forEach(c => c(true));
-        callback();
-      });
+      }
+    }, () => {
+      proxy.onchanges.forEach(c => c(true));
+      callback();
     });
   },
-  reset: (callback = function () {}) => {
-    chrome.proxy.settings.set(proxy.current, () => {
+  reset: (callback = function() {}) => {
+    chrome.proxy.settings.set({
+      value: {
+        mode: 'system'
+      }
+    }, () => {
       proxy.onchanges.forEach(c => c(false));
       callback();
     });
@@ -47,3 +31,30 @@ var proxy = {
     }
   }
 };
+
+if (/Firefox/.test(navigator.userAgent)) {
+/*  browser.proxy.onProxyError.addListener(error => {
+    console.error(`Proxy error: ${error.message}`);
+  });*/
+  const register = browser.proxy.register || browser.proxy.registerProxyScript;
+  register('data/pac/firefox.js');
+
+  proxy.set = (info, callback = function() {}) => {
+    browser.runtime.sendMessage({
+      method: 'register-proxy',
+      proxy: 'SOCKS ' + info['socks-host'] + ':' + info['socks-port']
+    }, {toProxyScript: true}, () => {
+      proxy.onchanges.forEach(c => c(true));
+      callback();
+    });
+  };
+  proxy.reset = (callback = function() {}) => {
+    browser.runtime.sendMessage({
+      method: 'register-proxy',
+      proxy: 'DIRECT'
+    }, {toProxyScript: true}, () => {
+      proxy.onchanges.forEach(c => c(false));
+      callback();
+    });
+  };
+}
