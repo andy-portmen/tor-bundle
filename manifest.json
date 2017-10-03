@@ -3,7 +3,7 @@
   "short_name": "itbrowser",
   "description": "Brings the anonymity of the Tor network and modifies few settings to protect user privacy",
   "author": "Jeremy Schomery, Andy Portmen",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "manifest_version": 2,
   "permissions": [
     "storage",
@@ -43,5 +43,11 @@
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
+  },
+  "applications": {
+    "gecko": {
+      "id": "{d22a1484-dcef-44e9-ab52-80f0f4a331a3}",
+      "strict_min_version": "57.0"
+    }
   }
 }

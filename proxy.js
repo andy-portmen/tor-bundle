@@ -33,7 +33,7 @@ var proxy = {
 };
 
 if (/Firefox/.test(navigator.userAgent)) {
-/*  browser.proxy.onProxyError.addListener(error => {
+  /*browser.proxy.onProxyError.addListener(error => {
     console.error(`Proxy error: ${error.message}`);
   });*/
   const register = browser.proxy.register || browser.proxy.registerProxyScript;
@@ -42,7 +42,12 @@ if (/Firefox/.test(navigator.userAgent)) {
   proxy.set = (info, callback = function() {}) => {
     browser.runtime.sendMessage({
       method: 'register-proxy',
-      proxy: 'SOCKS ' + info['socks-host'] + ':' + info['socks-port']
+      proxy: [{
+        host: info['socks-host'],
+        port: info['socks-port'],
+        type: 'socks',
+        proxyDNS: true
+      }]
     }, {toProxyScript: true}, () => {
       proxy.onchanges.forEach(c => c(true));
       callback();

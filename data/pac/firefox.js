@@ -1,6 +1,6 @@
 var proxy = 'DIRECT';
 
-function FindProxyForURL (url, host) {
+function FindProxyForURL() {
   return proxy;
 }
 
