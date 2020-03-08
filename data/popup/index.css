@@ -1,20 +1,21 @@
 body {
   width: 500px;
   height: 300px;
-  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: 13px;
-  background-color: #fff;
+  background-color: #f3f3f3;
+  color: #3e3e3e;
 }
 img {
   cursor: pointer;
 }
 input[type=button] {
-  border:  solid 1px #eee;
-  background-color: #fff;
+  background-color: #dadada;
   width: 120px;
-  margin: 2px 0;
+  padding: 8px 10px;
   outline: none;
   cursor: pointer;
+  border: none;
 }
 input {
   outline: none;
@@ -44,34 +45,41 @@ input[type=button]:active {
   align-items: center;
 }
 body[data-status=connecting] img[data-cmd=connection] {
-  opacity:  0.3;
+  opacity: 0.3;
 }
 
 #log {
-  padding: 10px;
+  padding: 5px;
   overflow-x: hidden;
   overflow-y: auto;
   width: calc(47vw - 20px);
-  background-color: rgba(0, 0, 0, 0.01);
-  border: dashed 1px rgba(0, 0, 0, 0.05);
+  background-color: #dadada;
 }
-#log>* {
-  margin-bottom: 10px;
+#log > * {
+  word-break: break-word;
+  padding: 2px 5px;
+  font-size: 12px;
+}
+#log > *:not(:last-child) {
+  margin-bottom: 5px;
 }
 #toolbar {
   margin-top: 8px;
-}
-
-.msg span:nth-child(1) {
-  font-size: 80%;
-}
-.msg span:nth-child(2) {
-  padding: 0 5px;
-  background-color: rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-around;
 }
 
 .log {
-  background-color: rgba(0, 0, 0, 0.05);
-  border:  dotted 1px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
   padding: 0 5px;
+}
+.log.notice {
+  background-color: #f3f3f3;
+}
+.log.warn {
+  background-color: #ffe3fe;
+}
+.log.err {
+  background-color: #ff8282;
+  color: #fff;
 }

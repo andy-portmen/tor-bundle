@@ -1,7 +1,7 @@
 /* globals EventEmitter */
 'use strict';
 
-var ui = new EventEmitter();
+const ui = new EventEmitter();
 ui.cache = {
   status: 'disconnected',
   ip: '0.0.0.0',
@@ -26,8 +26,11 @@ ui.on('title', obj => {
     chrome.browserAction.setIcon({
       path: {
         16: '/data/icons/' + (active ? 'enabled/' : '') + '16.png',
+        19: '/data/icons/' + (active ? 'enabled/' : '') + '19.png',
         32: '/data/icons/' + (active ? 'enabled/' : '') + '32.png',
-        64: '/data/icons/' + (active ? 'enabled/' : '') + '64.png',
+        38: '/data/icons/' + (active ? 'enabled/' : '') + '38.png',
+        48: '/data/icons/' + (active ? 'enabled/' : '') + '48.png',
+        64: '/data/icons/' + (active ? 'enabled/' : '') + '64.png'
       }
     });
   }
@@ -36,7 +39,7 @@ ui.on('title', obj => {
 ui.notification = function(message) {
   chrome.notifications.create({
     type: 'basic',
-    title: 'Tor Control',
+    title: chrome.runtime.getManifest().name,
     message,
     iconUrl: '/data/icons/48.png'
   });

@@ -6,8 +6,8 @@
   </head>
   <body vbox>
     <div hbox flex=1 style="overflow: hidden;">
-      <div flex=1 hbox id="toggle" pack="center" align="center">
-        <img width="120" height="120" src="off.png" data-cmd="connection">
+      <div flex=1 hbox id="toggle" pack="center" align="center" title="Press 'ON' to start a TOR executable and wait for a new connection. Press 'OFF' to kill the running TOR executable.">
+        <img width="80" height="80" src="off.svg" data-cmd="connection">
       </div>
 
       <div flex=2 vbox id="log">
@@ -22,7 +22,7 @@
     </div>
     <div id="toolbar">
       <input type="button" value="New Identity" data-rcmd="SIGNAL NEWNYM">
-      <input type="button" value="Get IP" data-rcmd="GETINFO address">
+      <input type="button" value="Get IP" data-cmd="address">
       <input type="button" value="Status" data-rcmd="GETINFO circuit-status">
       <input type="button" value="Verify" data-cmd="verify">
     </div>

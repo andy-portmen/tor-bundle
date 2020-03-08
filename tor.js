@@ -1,7 +1,7 @@
 /* globals EventEmitter */
 'use strict';
 
-var Native = function() {
+const Native = function() {
   this.callback = null;
   this.channel = chrome.runtime.connectNative('com.add0n.node');
 
@@ -15,7 +15,7 @@ var Native = function() {
   this.channel.onMessage.addListener(res => {
     if (res && res.stdout && res.stdout.type === 'Buffer') {
       res.stdout = {
-        data: String.fromCharCode.apply(String, res.stdout.data),
+        data: String.fromCharCode(...res.stdout.data),
         type: 'String'
       };
     }
@@ -41,19 +41,19 @@ Native.prototype.exec = function(command, args, callback = function() {}) {
   });
 };
 
-var Tor = function(options) {
+const Tor = function(options) {
   this.callback = this.response;
   EventEmitter.call(this);
   this.directory = options.directory;
   this.callbacks = [];
 
   this.info = {
-    status: 'disconnected',
-    password: options.password || 'tor-browser',
-    stdout: 'Press the switch button to get started',
-    stderr: '',
-    progress: 0,
-    ip: '0.0.0.0',
+    'status': 'disconnected',
+    'password': options.password || 'tor-browser',
+    'stdout': 'Press the switch button to get started\n',
+    'stderr': '',
+    'progress': 0,
+    'ip': '0.0.0.0',
     'socks-host': 'localhost',
     'socks-port': 22050,
     'control-port': 22051
@@ -100,15 +100,7 @@ Error: ${res.stderr}`
 
   if (res.stdout) {
     res.stdout.data.split('\n').forEach(data => {
-      const err = /\[(err|warn|notice)\] (.*)/.exec(data);
-      if (err) {
-        this.emit('console', {
-          type: err[1],
-          msg: err[2]
-        });
-      }
-
-      const progress = /Bootstrapped (\d+)%: (.*)/.exec(data);
+      const progress = /Bootstrapped (\d+)%:*\s\(([^)]*)\)/.exec(data);
       if (progress) {
         this.emit('progress', {
           value: Number(progress[1]),

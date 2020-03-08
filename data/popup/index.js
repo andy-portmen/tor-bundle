@@ -1,6 +1,6 @@
 'use strict';
 
-var elements = {
+const elements = {
   log: document.getElementById('log'),
   template: document.querySelector('#log template'),
   webrtc: document.getElementById('prefs.webrtc')
@@ -9,17 +9,18 @@ var elements = {
 function log(msg) {
   function single(msg) {
     let node = document.importNode(elements.template.content, true);
-    const parts = /(.*)\[(err|warn|notice)\] (.*)/.exec(msg);
-    if (parts) {
-      node.querySelector('span:nth-child(1)').textContent = parts[1];
-      node.querySelector('span:nth-child(2)').textContent = parts[2];
-      node.querySelector('span:nth-child(3)').textContent = parts[3];
+    node = document.createElement('span');
+    node.classList.add('log');
+    if (msg.indexOf('[notice]') !== -1) {
+      node.classList.add('notice');
     }
-    else {
-      node = document.createElement('span');
-      node.classList.add('log');
-      node.textContent = msg;
+    if (msg.indexOf('[warn]') !== -1) {
+      node.classList.add('warn');
     }
+    if (msg.indexOf('[err]') !== -1) {
+      node.classList.add('err');
+    }
+    node.textContent = msg.replace(/↵/g, '\n');
 
     elements.log.appendChild(node);
     elements.log.scrollTop = elements.log.scrollHeight;
@@ -30,7 +31,7 @@ function log(msg) {
 function status(s) {
   document.body.dataset.status = s;
   document.querySelector('[data-cmd="connection"]').src =
-    s === 'disconnected' ? 'off.png' : 'on.png';
+    s === 'disconnected' ? 'off.svg' : 'on.svg';
 }
 
 window.addEventListener('load', () => {
@@ -42,6 +43,9 @@ window.addEventListener('load', () => {
 
 chrome.runtime.onMessage.addListener(request => {
   if (request.cmd === 'event' && request.id === 'stdout') {
+    log(request.data);
+  }
+  if (request.cmd === 'event' && request.id === 'stderr') {
     log(request.data);
   }
   else if (request.cmd === 'event' && request.id === 'status') {
@@ -61,6 +65,11 @@ document.addEventListener('click', e => {
   if (cmd === 'verify') {
     chrome.tabs.create({
       url: 'https://check.torproject.org/'
+    });
+  }
+  if (cmd === 'address') {
+    chrome.tabs.create({
+      url: 'https://webbrowsertools.com/ip-address/'
     });
   }
   else if (cmd === 'connection') {

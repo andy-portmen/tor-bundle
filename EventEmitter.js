@@ -1,6 +1,6 @@
 'use strict';
 
-var EventEmitter = function() {
+const EventEmitter = function() {
   this.ecb = {};
 };
 EventEmitter.prototype.emit = function(id, data) {

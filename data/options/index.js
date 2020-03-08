@@ -13,7 +13,7 @@ function save() {
 
 function restore() {
   chrome.storage.local.get({
-    directory: '',
+    directory: ''
   }, prefs => {
     document.getElementById('directory').value = prefs.directory;
   });

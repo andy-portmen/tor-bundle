@@ -1,11 +1,3 @@
-var proxy = 'DIRECT';
-
 function FindProxyForURL() {
-  return proxy;
+  return 'SOCKS5 127.0.0.1:22050';
 }
-
-browser.runtime.onMessage.addListener(request => {
-  if (request.method === 'register-proxy') {
-    proxy = request.proxy;
-  }
-});

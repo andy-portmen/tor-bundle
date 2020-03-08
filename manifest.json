@@ -1,21 +1,14 @@
 {
-  "name": "Tor Control (anonymity layer)",
-  "short_name": "itbrowser",
-  "description": "Brings the anonymity of the Tor network and modifies few settings to protect user privacy",
-  "author": "Jeremy Schomery, Andy Portmen",
-  "version": "0.1.2",
+  "name": "Onion Control (anonymous proxy)",
+  "description": "Brings the anonymity of the Tor network plus modifies few settings to protect user privacy",
+  "version": "0.1.3",
   "manifest_version": 2,
   "permissions": [
     "storage",
-    "tabs",
     "proxy",
     "privacy",
-    "webRequest",
-    "downloads",
-    "management",
     "notifications",
-    "nativeMessaging",
-    "https://api.github.com/repos/andy-portmen/native-client/releases/latest"
+    "nativeMessaging"
   ],
   "background": {
     "scripts": [
@@ -28,26 +21,22 @@
     ]
   },
   "browser_action": {
-    "default_icon": {
-      "16": "data/icons/16.png",
-      "32": "data/icons/32.png"
-    },
     "default_popup": "data/popup/index.html"
   },
-  "homepage_url": "http://add0n.com/tor-control.html",
+  "homepage_url": "https://add0n.com/tor-control.html",
   "icons": {
     "16": "data/icons/16.png",
+    "19": "data/icons/19.png",
+    "32": "data/icons/32.png",
+    "38": "data/icons/38.png",
     "48": "data/icons/48.png",
-    "128": "data/icons/128.png"
+    "64": "data/icons/64.png",
+    "128": "data/icons/128.png",
+    "256": "data/icons/256.png",
+    "512": "data/icons/512.png"
   },
   "options_ui": {
     "page": "data/options/index.html",
     "chrome_style": true
-  },
-  "applications": {
-    "gecko": {
-      "id": "{d22a1484-dcef-44e9-ab52-80f0f4a331a3}",
-      "strict_min_version": "57.0"
-    }
   }
 }

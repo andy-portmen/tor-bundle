@@ -1,13 +1,18 @@
+/* global browser, ui, tor */
 'use strict';
 
-var proxy = {
+const proxy = {
   onchanges: [],
   set: (info, callback = function() {}) => {
     chrome.proxy.settings.set({
       value: {
         mode: 'pac_script',
         pacScript: {
-          url: chrome.runtime.getURL('data/pac/chrome.js')
+          data: `
+            function FindProxyForURL() {
+              return 'SOCKS5 ${tor.info['socks-host']}:${tor.info['socks-port']}';
+            }
+          `
         }
       }
     }, () => {
@@ -33,33 +38,25 @@ var proxy = {
 };
 
 if (/Firefox/.test(navigator.userAgent)) {
-  /*browser.proxy.onProxyError.addListener(error => {
-    console.error(`Proxy error: ${error.message}`);
-  });*/
-  const register = browser.proxy.register || browser.proxy.registerProxyScript;
-  register('data/pac/firefox.js');
-
   proxy.set = (info, callback = function() {}) => {
-    browser.runtime.sendMessage({
-      method: 'register-proxy',
-      proxy: [{
-        host: info['socks-host'],
-        port: info['socks-port'],
-        type: 'socks',
-        proxyDNS: true
-      }]
-    }, {toProxyScript: true}, () => {
-      proxy.onchanges.forEach(c => c(true));
-      callback();
+    browser.proxy.settings.set({
+      value: {
+        proxyType: 'manual',
+        socks: `http://${tor.info['socks-host']}:${tor.info['socks-port']}`,
+        socksVersion: 5,
+        passthrough: ''
+      }
+    }, () => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        ui.notification(lastError.message);
+        tor.emit('stdout', 'WebExtension API [err] ' + lastError.message + '\n');
+        tor.disconnect();
+        callback();
+      }
     });
   };
   proxy.reset = (callback = function() {}) => {
-    browser.runtime.sendMessage({
-      method: 'register-proxy',
-      proxy: 'DIRECT'
-    }, {toProxyScript: true}, () => {
-      proxy.onchanges.forEach(c => c(false));
-      callback();
-    });
+    browser.proxy.settings.clear({}).then(callback);
   };
 }

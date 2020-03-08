@@ -1,19 +1,20 @@
 /* globals Tor, proxy, privacy, ui */
 'use strict';
 
-var prefs = {
-  webrtc: 2,
-  policy: {
+const prefs = {
+  'webrtc': 2,
+  'policy': {
     'proxy': 0, // 0: turn on when tor is active and turn off when tor is disabled; 1: turn on when browser starts and do not turn off when tor is disabled
-    'webrtc': 0, // 0: turn on when tor is active and turn off when tor is disabled; 1: turn on when browser starts and do not turn off when tor is disabled
+    'webrtc': 0 // 0: turn on when tor is active and turn off when tor is disabled; 1: turn on when browser starts and do not turn off when tor is disabled
   },
   'auto-run': false,
   'directory': null
 };
 
-var tor = new Tor({
+const tor = new Tor({
   directory: ''
 });
+window.tor = tor;
 
 // get external IP address
 tor.on('status', status => {
@@ -45,7 +46,7 @@ proxy.addListener('change', bol => ui.emit('title', {
   proxy: bol ? 'SOCKS' : 'default'
 }));
 chrome.storage.local.get(prefs, p => {
-  prefs = Object.assign(prefs, p);
+  Object.assign(prefs, p);
   // directory
   tor.directory = p.directory;
   // auto run?
@@ -101,23 +102,31 @@ chrome.storage.onChanged.addListener(ps => {
   });
 });
 
-// FAQs & Feedback
-chrome.storage.local.get({
-  'version': null,
-  'faqs': navigator.userAgent.toLowerCase().indexOf('firefox') === -1
-}, prefs => {
-  const version = chrome.runtime.getManifest().version;
-
-  if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
-    chrome.storage.local.set({version}, () => {
-      chrome.tabs.create({
-        url: 'http://add0n.com/tor-control.html?version=' + version +
-          '&type=' + (prefs.version ? ('upgrade&p=' + prefs.version) : 'install')
+/* FAQs & Feedback */
+{
+  const {onInstalled, setUninstallURL, getManifest} = chrome.runtime;
+  const {name, version} = getManifest();
+  const page = getManifest().homepage_url;
+  if (navigator.webdriver !== true) {
+    onInstalled.addListener(({reason, previousVersion}) => {
+      chrome.storage.local.get({
+        'faqs': true,
+        'last-update': 0
+      }, prefs => {
+        if (reason === 'install' || (prefs.faqs && reason === 'update')) {
+          const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
+          if (doUpdate && previousVersion !== version) {
+            chrome.tabs.create({
+              url: page + '?version=' + version +
+                (previousVersion ? '&p=' + previousVersion : '') +
+                '&type=' + reason,
+              active: reason === 'install'
+            });
+            chrome.storage.local.set({'last-update': Date.now()});
+          }
+        }
       });
     });
+    setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
   }
-});
-(function() {
-  const {name, version} = chrome.runtime.getManifest();
-  chrome.runtime.setUninstallURL('http://add0n.com/feedback.html?name=' + name + '&version=' + version);
-})();
+}
