@@ -1,28 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tor Control :: Options</title>
-  <style>
-    body {
-      padding: 10px;
-    }
-    input[type=text] {
-      width: 100%;
-    }
-  </style>
+  <title>Onion Control :: Options Page</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
+  <h3>Tor bundle path</h3>
+  <input type="text" id="directory" placeholder="e.g.: C:\Users\username\Desktop\tor">
   <p>
-    Tor bundle path:
-    <input type="text" id="directory" placeholder="e.g.: C:\Users\username\Desktop\tor">
     <div>First download the latest "Tor Bundle" pack from <a href="https://github.com/andy-portmen/tor-bundle/releases">github.com</a>, and extract it in a local directory. Then place the absolute path of the root directory in the text-box.</div>
   </p>
+  <h3>WebRTC Control</h3>
+  <div class="grid">
+    <label for="policy.webrtc">Prevent WebRTC IP leakage</label>
+    <select id="policy.webrtc">
+      <option value="0">When Tor is connected</option>
+      <option value="1">On browser start (restart required)</option>
+      <option value="-1">Do not alter</option>
+    </select>
+    <label for="webrtc">WebRTC protection method</label>
+    <select id="webrtc">
+      <option value="0">default_public_and_private_interfaces</option>
+      <option value="1">default_public_interface_only</option>
+      <option value="2">disable_non_proxied_udp</option>
+      <option value="3">proxy_only</option>
+    </select>
+  </div>
 
-  <div>
+  <p>
     <button id="save">Save</button>
     <span id="status"></span>
-  </div>
+  </p>
 
   <script src="index.js"></script>
 </body>

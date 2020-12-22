@@ -149,7 +149,7 @@ Tor.prototype.command = function(command, callback = function() {}) {
     password: ''
   }, res => {
     callback(res);
-    this.emit('stdout', res.replace(/250[ \-+]/g, '').replace(/\n\r?/g, '↵'));
+    this.emit('stdout', (res || 'no response').replace(/250[ \-+]/g, '').replace(/\n\r?/g, '↵'));
   });
 };
 

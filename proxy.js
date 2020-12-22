@@ -44,7 +44,8 @@ if (/Firefox/.test(navigator.userAgent)) {
         proxyType: 'manual',
         socks: `http://${tor.info['socks-host']}:${tor.info['socks-port']}`,
         socksVersion: 5,
-        passthrough: ''
+        passthrough: '',
+        proxyDNS: true
       }
     }, () => {
       const lastError = chrome.runtime.lastError;

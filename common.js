@@ -2,11 +2,12 @@
 'use strict';
 
 const prefs = {
-  'webrtc': 2,
-  'policy': {
-    'proxy': 0, // 0: turn on when tor is active and turn off when tor is disabled; 1: turn on when browser starts and do not turn off when tor is disabled
-    'webrtc': 0 // 0: turn on when tor is active and turn off when tor is disabled; 1: turn on when browser starts and do not turn off when tor is disabled
-  },
+  'webrtc': /Firefox/.test(navigator.userAgent) ? 3 : 2,
+  // 0: turn on when tor is active and turn off when tor is disabled;
+  // 1: turn on when browser starts and do not turn off when tor is disabled
+  // -1: ignore changing
+  'policy.webrtc': 0,
+  'policy.proxy': 0,
   'auto-run': false,
   'directory': null
 };
@@ -27,14 +28,18 @@ tor.on('status', status => {
 // Set proxy
 tor.on('status', s => {
   if (s === 'connected') {
-    proxy.set(tor.info);
-    privacy.set(prefs.webrtc);
+    if (prefs['policy.proxy'] === 0) {
+      proxy.set(tor.info);
+    }
+    if (prefs['policy.webrtc'] === 0) {
+      privacy.set(prefs.webrtc);
+    }
   }
   else if (s === 'disconnected') {
-    if (prefs.policy.proxy === 0) {
+    if (prefs['policy.proxy'] === 0) {
       proxy.reset();
     }
-    if (prefs.policy.webrtc === 0) {
+    if (prefs['policy.webrtc'] === 0) {
       privacy.reset();
     }
   }
@@ -47,16 +52,17 @@ proxy.addListener('change', bol => ui.emit('title', {
 }));
 chrome.storage.local.get(prefs, p => {
   Object.assign(prefs, p);
+
   // directory
   tor.directory = p.directory;
   // auto run?
   if (prefs['auto-run']) {
     tor.refresh();
   }
-  if (prefs.policy.proxy === 1) {
-    privacy.set(prefs.proxy);
-  }
-  if (prefs.policy.webrtc === 1) {
+  // if (prefs.policy.proxy === 1) {
+  //   privacy.set(prefs.proxy);
+  // }
+  if (prefs['policy.webrtc'] === 1) {
     privacy.set(prefs.webrtc);
   }
 });
@@ -104,28 +110,27 @@ chrome.storage.onChanged.addListener(ps => {
 
 /* FAQs & Feedback */
 {
-  const {onInstalled, setUninstallURL, getManifest} = chrome.runtime;
-  const {name, version} = getManifest();
-  const page = getManifest().homepage_url;
+  const {management, runtime: {onInstalled, setUninstallURL, getManifest}, storage, tabs} = chrome;
   if (navigator.webdriver !== true) {
+    const page = getManifest().homepage_url;
+    const {name, version} = getManifest();
     onInstalled.addListener(({reason, previousVersion}) => {
-      chrome.storage.local.get({
+      management.getSelf(({installType}) => installType === 'normal' && storage.local.get({
         'faqs': true,
         'last-update': 0
       }, prefs => {
         if (reason === 'install' || (prefs.faqs && reason === 'update')) {
           const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
           if (doUpdate && previousVersion !== version) {
-            chrome.tabs.create({
-              url: page + '?version=' + version +
-                (previousVersion ? '&p=' + previousVersion : '') +
-                '&type=' + reason,
-              active: reason === 'install'
-            });
-            chrome.storage.local.set({'last-update': Date.now()});
+            tabs.query({active: true, currentWindow: true}, tbs => tabs.create({
+              url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
+              active: reason === 'install',
+              index: tbs ? tbs[0].index + 1 : undefined
+            }));
+            storage.local.set({'last-update': Date.now()});
           }
         }
-      });
+      }));
     });
     setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
   }
