@@ -19,6 +19,12 @@ const Native = function() {
         type: 'String'
       };
     }
+    if (res && res.stderr && res.stderr.type === 'Buffer') {
+      res.stderr = {
+        data: String.fromCharCode(...res.stderr.data),
+        type: 'String'
+      };
+    }
 
     if (!res) {
       chrome.tabs.create({
@@ -90,12 +96,11 @@ Error: ${res.stderr}`
       );
     }
   }
-
   if (res.stdout) {
     this.emit('stdout', res.stdout.data);
   }
   if (res.stderr) {
-    this.emit('stderr', res.stdout.data);
+    this.emit('stderr', res.stderr.data);
   }
 
   if (res.stdout) {

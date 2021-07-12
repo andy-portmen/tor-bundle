@@ -1,14 +1,19 @@
 'use strict';
 
+const toast = document.getElementById('toast');
+
+if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+  document.getElementById('directory').placeholder = 'e.g.: /Users/me/Downloads/mac';
+}
+
 function save() {
   chrome.storage.local.set({
     'directory': document.getElementById('directory').value,
     'webrtc': document.getElementById('webrtc').value,
     'policy.webrtc': Number(document.getElementById('policy.webrtc').value)
   }, () => {
-    const status = document.getElementById('status');
-    status.textContent = 'Options saved.';
-    setTimeout(() => status.textContent = '', 750);
+    toast.textContent = 'Options saved.';
+    setTimeout(() => toast.textContent = '', 750);
   });
 }
 
@@ -28,3 +33,31 @@ document.getElementById('save').addEventListener('click', save);
 if (/Firefox/.test(navigator.userAgent) === false) {
   document.querySelector('[value="3"]').disabled = true;
 }
+
+const links = window.links = (d = document) => {
+  for (const a of [...d.querySelectorAll('[data-href]')]) {
+    if (a.hasAttribute('href') === false) {
+      a.href = chrome.runtime.getManifest().homepage_url + '#' + a.dataset.href;
+    }
+  }
+};
+document.addEventListener('DOMContentLoaded', () => links());
+
+// reset
+document.getElementById('reset').addEventListener('click', e => {
+  if (e.detail === 1) {
+    toast.textContent = 'Double-click to reset!';
+    window.setTimeout(() => toast.textContent = '', 750);
+  }
+  else {
+    localStorage.clear();
+    chrome.storage.local.clear(() => {
+      chrome.runtime.reload();
+      window.close();
+    });
+  }
+});
+// support
+document.getElementById('support').addEventListener('click', () => chrome.tabs.create({
+  url: chrome.runtime.getManifest().homepage_url + '?rd=donate'
+}));

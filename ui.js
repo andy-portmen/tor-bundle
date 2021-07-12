@@ -12,7 +12,7 @@ ui.cache = {
 ui.on('title', obj => {
   ui.cache = Object.assign(ui.cache, obj);
 
-  chrome.browserAction.setTitle({
+  chrome.action.setTitle({
     title: `Tor Browser (${ui.cache.status})
 
 IP: ${ui.cache.ip}
@@ -23,7 +23,7 @@ Proxy: ${ui.cache.proxy}`
 ui.on('title', obj => {
   if (obj.status) {
     const active = obj.status === 'connected';
-    chrome.browserAction.setIcon({
+    chrome.action.setIcon({
       path: {
         16: '/data/icons/' + (active ? 'enabled/' : '') + '16.png',
         19: '/data/icons/' + (active ? 'enabled/' : '') + '19.png',

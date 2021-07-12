@@ -6,7 +6,8 @@ const elements = {
   webrtc: document.getElementById('prefs.webrtc')
 };
 
-function log(msg) {
+function log(msg = '', type = '') {
+  console.log(msg, type);
   function single(msg) {
     let node = document.importNode(elements.template.content, true);
     node = document.createElement('span');
@@ -17,7 +18,7 @@ function log(msg) {
     if (msg.indexOf('[warn]') !== -1) {
       node.classList.add('warn');
     }
-    if (msg.indexOf('[err]') !== -1) {
+    if (msg.indexOf('[err]') !== -1 || type === 'error') {
       node.classList.add('err');
     }
     node.textContent = msg.replace(/↵/g, '\n');
@@ -25,6 +26,7 @@ function log(msg) {
     elements.log.appendChild(node);
     elements.log.scrollTop = elements.log.scrollHeight;
   }
+  console.log(msg);
   msg.split('\n').filter(m => m.trim()).forEach(single);
 }
 
@@ -34,19 +36,20 @@ function status(s) {
     s === 'disconnected' ? 'off.svg' : 'on.svg';
 }
 
-window.addEventListener('load', () => {
-  chrome.runtime.getBackgroundPage(b => {
-    log(b.tor.info.stdout);
-    status(b.tor.info.status);
-  });
-});
+window.addEventListener('load', () => chrome.runtime.sendMessage({
+  method: 'popup-report'
+}, report => {
+  log(report.stdout);
+  status(report.status);
+}));
+
 
 chrome.runtime.onMessage.addListener(request => {
   if (request.cmd === 'event' && request.id === 'stdout') {
     log(request.data);
   }
   if (request.cmd === 'event' && request.id === 'stderr') {
-    log(request.data);
+    log(request.data, 'error');
   }
   else if (request.cmd === 'event' && request.id === 'status') {
     status(request.data);

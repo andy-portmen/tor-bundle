@@ -1,6 +1,8 @@
 /* globals Tor, proxy, privacy, ui */
 'use strict';
 
+self.importScripts('EventEmitter.js', 'tor.js', 'proxy.js', 'privacy.js', 'ui.js');
+
 const prefs = {
   'webrtc': /Firefox/.test(navigator.userAgent) ? 3 : 2,
   // 0: turn on when tor is active and turn off when tor is disabled;
@@ -15,7 +17,6 @@ const prefs = {
 const tor = new Tor({
   directory: ''
 });
-window.tor = tor;
 
 // get external IP address
 tor.on('status', status => {
@@ -74,7 +75,7 @@ privacy.addListener('change', (type, state) => {
   tor.emit('stdout', `Protection: module -> ${type}, status -> ${state}`);
 });
 
-chrome.runtime.onMessage.addListener(request => {
+chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.method === 'popup-command') {
     if (request.cmd) {
       tor.command(request.cmd);
@@ -95,6 +96,12 @@ chrome.runtime.onMessage.addListener(request => {
         }
       }
     }
+  }
+  else if (request.method === 'popup-report') {
+    response({
+      stdout: tor.info.stdout,
+      status: tor.info.status
+    });
   }
 });
 
@@ -125,7 +132,7 @@ chrome.storage.onChanged.addListener(ps => {
             tabs.query({active: true, currentWindow: true}, tbs => tabs.create({
               url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
               active: reason === 'install',
-              index: tbs ? tbs[0].index + 1 : undefined
+              ...(tbs && tbs.length && {index: tbs[0].index + 1})
             }));
             storage.local.set({'last-update': Date.now()});
           }

@@ -9,8 +9,10 @@
   <h3>Tor bundle path</h3>
   <input type="text" id="directory" placeholder="e.g.: C:\Users\username\Desktop\tor">
   <p>
-    <div>First download the latest "Tor Bundle" pack from <a href="https://github.com/andy-portmen/tor-bundle/releases">github.com</a>, and extract it in a local directory. Then place the absolute path of the root directory in the text-box.</div>
+    <div>First, download the latest "Tor Bundle" pack from <a target="_blank" href="https://github.com/andy-portmen/tor-bundle/releases">github.com/andy-portmen/tor-bundle</a>, and extract it in a directory. Then place the absolute path of the root directory in the text box above.</div>
   </p>
+  <p>On Mac OS, read <a data-href="faq10" target="_blank">this extra help</a>.</p>
+  <p>On Linux OS, read <a data-href="faq11" target="_blank">this extra help</a>.</p>
   <h3>WebRTC Control</h3>
   <div class="grid">
     <label for="policy.webrtc">Prevent WebRTC IP leakage</label>
@@ -29,8 +31,12 @@
   </div>
 
   <p>
-    <button id="save">Save</button>
-    <span id="status"></span>
+    <button id="support">Support Development</button>
+    <button id="reset">Factory Reset</button>
+  </p>
+  <p>
+    <button id="save">Save Options</button>
+    <span id="toast"></span>
   </p>
 
   <script src="index.js"></script>

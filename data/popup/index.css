@@ -9,19 +9,20 @@ body {
 img {
   cursor: pointer;
 }
+
+button,
+input[type=submit],
 input[type=button] {
-  background-color: #dadada;
+  color: #444;
+  background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+  box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
+  text-shadow: rgb(240, 240, 240) 0 1px 0;
+  border: solid 1px rgba(0, 0, 0, 0.25);
   width: 120px;
   padding: 8px 10px;
-  outline: none;
-  cursor: pointer;
-  border: none;
 }
-input {
-  outline: none;
-}
-input[type=button]:active {
-  border-color: #00a;
+input[type=button]:disabled {
+  opacity: 0.5;
 }
 
 [hbox] {
@@ -49,11 +50,11 @@ body[data-status=connecting] img[data-cmd=connection] {
 }
 
 #log {
-  padding: 5px;
+  padding: 2px;
   overflow-x: hidden;
   overflow-y: auto;
   width: calc(47vw - 20px);
-  background-color: #dadada;
+  background-color: #fff;
 }
 #log > * {
   word-break: break-word;
@@ -61,7 +62,7 @@ body[data-status=connecting] img[data-cmd=connection] {
   font-size: 12px;
 }
 #log > *:not(:last-child) {
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 #toolbar {
   margin-top: 8px;
@@ -74,7 +75,7 @@ body[data-status=connecting] img[data-cmd=connection] {
   padding: 0 5px;
 }
 .log.notice {
-  background-color: #f3f3f3;
+  background-color: #ddefff;
 }
 .log.warn {
   background-color: #ffe3fe;
